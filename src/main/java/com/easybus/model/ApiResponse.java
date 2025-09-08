@@ -14,7 +14,7 @@ public class ApiResponse<T> {
     private T data;         // actual response data
     private int statusCode;
     private List<?> list;
-    public ApiResponse( String status, String message, List<?> data) {
+    public ApiResponse( String status, String message, List data) {
 		super();
 		
 		this.status = status;
