@@ -27,16 +27,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
         user.setIsActive(true); // default active
-        log.info("👤 Creating new user with email={} phone={}", user.getEmail(), user.getPhone());
+        log.info(" Creating new user with email={} phone={}", user.getEmail(), user.getPhone());
         User saved = userRepository.save(user);
-        log.debug("✅ User created successfully with id={}", saved.getId());
+        log.debug(" User created successfully with id={}", saved.getId());
         return saved;
     }
 
     // ✅ Update existing user
     @Override
     public User updateUser(Long id, User user) {
-        log.info("✏️ Updating user with id={}", id);
+        log.info(" Updating user with id={}", id);
 
         return userRepository.findById(id)
                 .map(existing -> {
@@ -45,32 +45,32 @@ public class UserServiceImpl implements UserService {
                     existing.setPhone(user.getPhone());
                     existing.setUpdateDate(java.time.LocalDateTime.now());
                     User updated = userRepository.save(existing);
-                    log.debug("✅ User updated successfully id={} email={}", updated.getId(), updated.getEmail());
+                    log.debug(" User updated successfully id={} email={}", updated.getId(), updated.getEmail());
                     return updated;
                 })
                 .orElseThrow(() -> {
-                    log.error("❌ User not found with id={}", id);
+                    log.error(" User not found with id={}", id);
                     return new RuntimeException("User not found");
                 });
     }
 
-    // ✅ Soft delete user (mark inactive)
+    //  Soft delete user (mark inactive)
     @Override
     public void softDeleteUser(Long id) {
-        log.info("🗑️ Soft deleting user with id={}", id);
+        log.info(" Soft deleting user with id={}", id);
 
         userRepository.findById(id).ifPresent(user -> {
             user.setIsActive(false);
             user.setUpdateDate(java.time.LocalDateTime.now());
             userRepository.save(user);
-            log.debug("✅ User soft deleted id={}", id);
+            log.debug(" User soft deleted id={}", id);
         });
     }
 
-    // ✅ Get users with filters (id, email, phone)
+    //  Get users with filters (id, email, phone)
     @Override
     public List<User> getUsers(Long id, String email, String phone) {
-        log.info("📋 Fetching users with filters id={} email={} phone={}", id, email, phone);
+        log.info(" Fetching users with filters id={} email={} phone={}", id, email, phone);
 
         Specification<User> spec = Specification.where(UserSpecification.isActive())
                 .and(UserSpecification.hasId(id))
@@ -78,14 +78,14 @@ public class UserServiceImpl implements UserService {
                 .and(UserSpecification.hasPhone(phone));
 
         List<User> users = userRepository.findAll(spec);
-        log.debug("✅ Found {} active users", users.size());
+        log.debug(" Found {} active users", users.size());
         return users;
     }
 
     // ✅ Search users (similar to get but flexible)
     @Override
     public List<User> searchUsers(Long id, String email, String phone) {
-        log.info("🔎 Searching users with criteria id={} email={} phone={}", id, email, phone);
+        log.info(" Searching users with criteria id={} email={} phone={}", id, email, phone);
 
         List<User> users = userRepository.findAll(
                 Specification.where(UserSpecification.hasId(id))
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
                         .and(UserSpecification.isActive())
         );
 
-        log.debug("✅ Found {} matching users", users.size());
+        log.debug(" Found {} matching users", users.size());
         return users;
     }
 }

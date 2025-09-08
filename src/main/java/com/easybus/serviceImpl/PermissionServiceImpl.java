@@ -27,50 +27,50 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public Permission createPermission(Permission permission) {
-        log.info("🔐 Creating new permission: {}", permission.getPermissionName());
+        log.info(" Creating new permission: {}", permission.getPermissionName());
         return permissionRepo.save(permission);
     }
 
     @Override
     public List<Permission> createPermissions(List<Permission> permissions) {
-        log.info("🔐 Creating {} permissions in bulk", permissions.size());
+        log.info(" Creating {} permissions in bulk", permissions.size());
         return permissionRepo.saveAll(permissions);
     }
 
     @Override
     public List<Permission> updatePermissions(List<Permission> permissions) {
-        log.info("✏️ Updating {} permissions in bulk", permissions.size());
+        log.info(" Updating {} permissions in bulk", permissions.size());
         return permissionRepo.saveAll(permissions);
     }
 
     @Override
     public void deletePermission(Long id) {
-        log.warn("🗑️ Deleting permission with id={}", id);
+        log.warn(" Deleting permission with id={}", id);
         permissionRepo.deleteById(id);
     }
 
     @Override
     public void deletePermissions(List<Long> ids) {
-        log.warn("🗑️ Bulk delete for {} permissions", ids.size());
+        log.warn(" Bulk delete for {} permissions", ids.size());
         permissionRepo.deleteAllById(ids);
     }
 
     @Override
     public List<Permission> getAllPermissions() {
-        log.info("📋 Fetching all permissions");
+        log.info(" Fetching all permissions");
         return permissionRepo.findAll();
     }
 
     @Override
     public Permission getPermissionById(Long id) {
-        log.info("🔎 Fetching permission with id={}", id);
+        log.info(" Fetching permission with id={}", id);
         return permissionRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Permission not found with id: " + id));
     }
 
     @Override
     public void assignPermissionToRole(Long roleId, Long permissionId) {
-        log.info("➕ Assigning permissionId={} to roleId={}", permissionId, roleId);
+        log.info(" Assigning permissionId={} to roleId={}", permissionId, roleId);
 
         Permission permission = permissionRepo.findById(permissionId)
                 .orElseThrow(() -> new RuntimeException("Permission not found"));
@@ -81,12 +81,12 @@ public class PermissionServiceImpl implements PermissionService {
         rp.setPermissionName(permission.getPermissionName());
 
         rolePermissionRepository.save(rp);
-        log.debug("✅ Assigned permission '{}' to role {}", permission.getPermissionName(), roleId);
+        log.debug(" Assigned permission '{}' to role {}", permission.getPermissionName(), roleId);
     }
 
     @Override
     public void assignPermissionsToRole(Long roleId, List<Long> permissionIds) {
-        log.info("➕ Assigning {} permissions to roleId={}", permissionIds.size(), roleId);
+        log.info(" Assigning {} permissions to roleId={}", permissionIds.size(), roleId);
         for (Long pid : permissionIds) {
             assignPermissionToRole(roleId, pid);
         }
@@ -94,28 +94,28 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public void removePermissionFromRole(Long roleId, Long permissionId) {
-        log.info("❌ Removing permissionId={} from roleId={}", permissionId, roleId);
+        log.info(" Removing permissionId={} from roleId={}", permissionId, roleId);
         Role role = roleRepo.findById(roleId).orElseThrow();
         Permission permission = permissionRepo.findById(permissionId).orElseThrow();
         role.getPermissions().remove(permission);
         roleRepo.save(role);
-        log.debug("✅ Removed permissionId={} from roleId={}", permissionId, roleId);
+        log.debug(" Removed permissionId={} from roleId={}", permissionId, roleId);
     }
 
     @Override
     public void removePermissionsFromRole(Long roleId, List<Long> permissionIds) {
-        log.info("❌ Removing {} permissions from roleId={}", permissionIds.size(), roleId);
+        log.info(" Removing {} permissions from roleId={}", permissionIds.size(), roleId);
         Role role = roleRepo.findById(roleId).orElseThrow();
         List<Permission> permissions = permissionRepo.findAllById(permissionIds);
         role.getPermissions().removeAll(permissions);
         roleRepo.save(role);
-        log.debug("✅ Removed {} permissions from roleId={}", permissions.size(), roleId);
+        log.debug(" Removed {} permissions from roleId={}", permissions.size(), roleId);
     }
 
     @Override
     @Transactional
     public Permission updatePermission(Long id, Permission permission) {
-        log.info("✏️ Updating permission with id={}", id);
+        log.info(" Updating permission with id={}", id);
 
         Permission existing = permissionRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Permission not found with id: " + id));
@@ -126,7 +126,7 @@ public class PermissionServiceImpl implements PermissionService {
         existing.setVersion(existing.getVersion() + 1); // increment version
 
         Permission updated = permissionRepo.save(existing);
-        log.debug("✅ Updated permission: {}", updated);
+        log.debug(" Updated permission: {}", updated);
         return updated;
     }
 }

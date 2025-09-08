@@ -25,13 +25,13 @@ public class SeatLockServiceImpl implements SeatLockService {
 
     @Override
     public boolean lockSeats(Long busId, LocalDate journeyDate, List<String> seatNumbers) {
-        log.info("🔒 Trying to lock seats {} for busId={} on date={}", seatNumbers, busId, journeyDate);
+        log.info(" Trying to lock seats {} for busId={} on date={}", seatNumbers, busId, journeyDate);
 
         // Check if seats are already booked
         List<String> alreadyBooked = bookingRepository.findBookedSeats(busId, journeyDate);
         for (String seat : seatNumbers) {
             if (alreadyBooked.contains(seat)) {
-                log.warn("⚠️ Seat {} already booked for busId={} on {}", seat, busId, journeyDate);
+                log.warn(" Seat {} already booked for busId={} on {}", seat, busId, journeyDate);
                 return false; // seat already booked
             }
         }
@@ -40,26 +40,26 @@ public class SeatLockServiceImpl implements SeatLockService {
         for (String seat : seatNumbers) {
             String key = busId + "-" + journeyDate.toString() + "-" + seat;
             lockedSeats.add(key);
-            log.debug("✅ Locked seat: {}", key);
+            log.debug(" Locked seat: {}", key);
         }
 
-        log.info("✅ Successfully locked {} seats for busId={} on {}", seatNumbers.size(), busId, journeyDate);
+        log.info(" Successfully locked {} seats for busId={} on {}", seatNumbers.size(), busId, journeyDate);
         return true;
     }
 
     @Override
     public void unlockSeats(Long busId, LocalDate journeyDate, List<String> seats) {
-        log.info("🔓 Unlocking seats {} for busId={} on date={}", seats, busId, journeyDate);
+        log.info(" Unlocking seats {} for busId={} on date={}", seats, busId, journeyDate);
 
         for (String seat : seats) {
             String key = busId + "-" + journeyDate.toString() + "-" + seat;
             if (lockedSeats.remove(key)) {
-                log.debug("✅ Unlocked seat: {}", key);
+                log.debug(" Unlocked seat: {}", key);
             } else {
-                log.warn("⚠️ Seat {} was not locked, skipping...", seat);
+                log.warn(" Seat {} was not locked, skipping...", seat);
             }
         }
 
-        log.info("✅ Completed unlocking seats for busId={} on {}", busId, journeyDate);
+        log.info(" Completed unlocking seats for busId={} on {}", busId, journeyDate);
     }
 }

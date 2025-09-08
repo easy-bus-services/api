@@ -24,7 +24,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewResponse addReview(ReviewRequest request) {
-        log.info("📝 Adding review for busId={} by userId={}", request.getBusId(), request.getUserId());
+        log.info(" Adding review for busId={} by userId={}", request.getBusId(), request.getUserId());
 
         Review review = new Review();
         review.setUserId(request.getUserId());
@@ -33,7 +33,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setFeedback(request.getFeedback());
 
         Review saved = reviewRepository.save(review);
-        log.debug("✅ Saved review: {}", saved);
+        log.debug(" Saved review: {}", saved);
 
         ReviewResponse response = new ReviewResponse();
         response.setId(saved.getId());
@@ -43,13 +43,13 @@ public class ReviewServiceImpl implements ReviewService {
         response.setFeedback(saved.getFeedback());
         response.setMessage("Review submitted successfully!");
 
-        log.info("✅ Review added successfully for busId={}", saved.getBusId());
+        log.info(" Review added successfully for busId={}", saved.getBusId());
         return response;
     }
 
     @Override
     public List<ReviewResponse> getReviewsByBus(Long busId) {
-        log.info("🔎 Fetching reviews for busId={}", busId);
+        log.info(" Fetching reviews for busId={}", busId);
 
         List<ReviewResponse> responses = reviewRepository.findByBusId(busId)
                 .stream()
@@ -65,7 +65,7 @@ public class ReviewServiceImpl implements ReviewService {
                 })
                 .collect(Collectors.toList());
 
-        log.info("📋 Found {} reviews for busId={}", responses.size(), busId);
+        log.info(" Found {} reviews for busId={}", responses.size(), busId);
         return responses;
     }
 }

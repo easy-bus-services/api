@@ -51,7 +51,7 @@ public class BookingController {
         }
     }
 
-    // ❌ Cancel Ticket
+    //  Cancel Ticket
     @DeleteMapping("/cancel/{bookingId}")
     public ResponseEntity<ResponseMessage> cancelTicket(@PathVariable Long bookingId) {
         log.warn(" Cancel request received for bookingId: {}", bookingId);

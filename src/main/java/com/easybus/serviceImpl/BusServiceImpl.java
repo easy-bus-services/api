@@ -29,60 +29,60 @@ public class BusServiceImpl implements BusService {
 
     @Override
     public List<Bus> searchBuses(String from, String to) {
-        log.info("🔍 Searching buses from '{}' to '{}'", from, to);
+        log.info(" Searching buses from '{}' to '{}'", from, to);
         List<Bus> buses = busRepository.findBySourceAndDestination(from, to);
-        log.debug("✅ Found {} buses", buses.size());
+        log.debug(" Found {} buses", buses.size());
         return buses;
     }
 
     @Override
     public Optional<Bus> getBusDetails(Long id) {
-        log.info("🚌 Fetching details for busId={}", id);
+        log.info(" Fetching details for busId={}", id);
         Optional<Bus> bus = busRepository.findById(id);
         if (bus.isPresent()) {
-            log.debug("✅ Bus found: {}", bus.get());
+            log.debug(" Bus found: {}", bus.get());
         } else {
-            log.warn("⚠️ No bus found with id={}", id);
+            log.warn(" No bus found with id={}", id);
         }
         return bus;
     }
 
     @Override
     public List<Seat> getSeatLayout(Long busId) {
-        log.info("🪑 Fetching seat layout for busId={}", busId);
+        log.info(" Fetching seat layout for busId={}", busId);
         List<Seat> seats = seatRepository.findByBusId(busId);
-        log.debug("✅ Found {} seats for busId={}", seats.size(), busId);
+        log.debug(" Found {} seats for busId={}", seats.size(), busId);
         return seats;
     }
 
     @Override
     public long getSeatAvailability(Long busId) {
-        log.info("🔎 Checking seat availability for busId={}", busId);
+        log.info(" Checking seat availability for busId={}", busId);
         long availableSeats = seatRepository.findByBusId(busId)
                 .stream()
                 .filter(Seat::isAvailable)
                 .count();
-        log.debug("✅ Available seats for busId={}: {}", busId, availableSeats);
+        log.debug(" Available seats for busId={}: {}", busId, availableSeats);
         return availableSeats;
     }
 
     @Override
     public Fare getFareDetails(Long busId) {
-        log.info("💰 Fetching fare details for busId={}", busId);
+        log.info(" Fetching fare details for busId={}", busId);
         Fare fare = fareRepository.findByBusId(busId);
         if (fare != null) {
-            log.debug("✅ Fare details: {}", fare);
+            log.debug(" Fare details: {}", fare);
         } else {
-            log.warn("⚠️ No fare details found for busId={}", busId);
+            log.warn(" No fare details found for busId={}", busId);
         }
         return fare;
     }
 
     @Override
     public List<String> getPopularRoutes() {
-        log.info("📊 Fetching popular routes from booking data");
+        log.info(" Fetching popular routes from booking data");
         List<String> routes = bookingRepository.findTopPopularRoutes();
-        log.debug("✅ Popular routes: {}", routes);
+        log.debug(" Popular routes: {}", routes);
         return routes;
     }
 }
