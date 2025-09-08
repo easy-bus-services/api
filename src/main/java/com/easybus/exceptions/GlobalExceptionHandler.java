@@ -38,9 +38,9 @@ public class GlobalExceptionHandler {
         });
         log.warn("Validation errors: {}", errors);
         ApiResponse<Map<String, String>> response = new ApiResponse<>("error", "Validation failed", errors);
-        return ResponseEntity.badRequest()
-                .body(new ApiResponse<>("Validation failure", "Validation errors occurred", errors));
-       // return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//        return ResponseEntity.badRequest()
+//                .body(new ApiResponse<>("Validation failure", "Validation errors occurred", errors));
+       return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     

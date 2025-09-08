@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +21,6 @@ import com.easybus.model.PagedResponse;
 import com.easybus.model.UserSpecification;
 import com.easybus.repository.UserRepository;
 import com.easybus.service.UserService;
-import com.easybus.specification.UserSpecification;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -42,7 +40,7 @@ public class UserServiceImpl implements UserService {
 		        user.setReferralId(generateReferralCode(user.getFullName()));
 		    }
       	user.setStatus(User.Status.ACTIVE);// default active
-        log.info(" Creating new user with email={} phone={}", user.getEmail(), user.getPhone());
+        log.info(" Creating new user with email={} phone={}", user.getEmail(), user.getPhoneNumber());
         User saved = userRepository.save(user);
         log.debug(" User created successfully with id={}", saved.getId());
         return saved;
@@ -57,9 +55,9 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new RuntimeException("User not found with id " + id));
 
 		modelMapper.map(user, existingUser); // auto maps all fields
- log.debug(" User updated successfully id={} email={}", updated.getId(), updated.getEmail());
+ log.debug(" User updated successfully id={} email={}", existingUser.getId(), existingUser.getEmail());
 		return userRepository.save(existingUser);
-                });
+              
     }
  
     //  Soft delete user (mark inactive)
@@ -84,20 +82,6 @@ public class UserServiceImpl implements UserService {
 	}   
 
 
-    //  Get users with filters (id, email, phone)
-    @Override
-    public List<User> getUsers(Long id, String email, String phone) {
-        log.info(" Fetching users with filters id={} email={} phone={}", id, email, phone);
-
-        Specification<User> spec = Specification.where(UserSpecification.isActive())
-                .and(UserSpecification.hasId(id))
-                .and(UserSpecification.hasEmail(email))
-                .and(UserSpecification.hasPhone(phone));
-
-        List<User> users = userRepository.findAll(spec);
-        log.debug(" Found {} active users", users.size());
-        return users;
-    }
 
   	// --- Bulk ---
 	@Override
@@ -110,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
 			throw new RuntimeException("These emails already exist: " + list);
 		}
-		
+		 
 		LocalDateTime now = LocalDateTime.now();
 		users.forEach(u -> {
 			  if (u.getReferralId() == null || u.getReferralId().isEmpty()) {
@@ -234,4 +218,4 @@ public class UserServiceImpl implements UserService {
 	    }
 	
 }
-}
+
