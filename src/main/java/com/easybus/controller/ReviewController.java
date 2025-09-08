@@ -20,7 +20,6 @@ import com.easybus.model.ReviewRequest;
 import com.easybus.model.ReviewResponse;
 import com.easybus.service.ReviewService;
 
-
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/reviews")
