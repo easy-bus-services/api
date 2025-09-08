@@ -18,16 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.easybus.Constants;
 import com.easybus.entity.User;
-import com.easybus.model.ResponseMessage;
+import com.easybus.model.ApiResponse;
+import com.easybus.model.PagedResponse;
 import com.easybus.service.UserService;
 
-@RestController
-@RequestMapping("/api/users")
-public class UserController {
+import jakarta.validation.Valid;
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
-    private final UserService userService;
+    @RestController
+    @RequestMapping("/api/users")
+    public class UserController {
+    	   private static final Logger log = LoggerFactory.getLogger(UserController.class);
+        private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -52,7 +53,7 @@ public class UserController {
         log.info(" User created successfully: {}", created);
 
         return ResponseEntity.ok(
-                new ResponseMessage(200, Constants.SUCCESS, "User created successfully", created)
+                new ResponseMessage(201, Constants.SUCCESS, "User created successfully", created)
         );
     }
 
@@ -177,4 +178,70 @@ public class UserController {
                 new ResponseMessage(200, Constants.SUCCESS, "Users retrieved successfully", users)
         );
     }
+	
+	
+	@GetMapping("/searchAll")
+    public ResponseEntity<PagedResponse<User>> searchUsers(
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String phonNumber,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+
+    	 PagedResponse<User> users = userService.searchUsers(email, name, status,phonNumber, page, size, sortBy);
+        return ResponseEntity.ok(users);
+    }
+
+
+        // ➤ DELETE MULTIPLE USERS (soft delete)
+        @DeleteMapping("/bulk-delete")
+        public ResponseEntity<ApiResponse<String>> deleteUsers(@RequestParam List<Long> ids) {
+        	 log.warn("API: bulkSoftDelete ids={}", ids);
+            userService.softDeleteUsers(ids);
+            return ResponseEntity.ok(new ApiResponse<>("success", "Users deleted successfully", null));
+        }
+    
+	
+	  // ➤ CREATE MULTIPLE USERS
+        @PostMapping("/bulk")
+        public ResponseEntity<ApiResponse<List<User>>> createUsers(@RequestBody @Valid List<User> users) {
+        	  log.info("Creating user with email: {}", users);
+            List<User> savedUsers = userService.createUsers(users);
+            log.debug("Created user: {}", savedUsers);
+            return ResponseEntity.ok(new ApiResponse<>("success", "Users created successfully", savedUsers));
+        }
+
+
+  // ➤ GET SINGLE USER
+        @GetMapping("/{id}")
+        public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
+            User user = userService.getUser(id);
+            return ResponseEntity.ok(new ApiResponse<>("success", "User retrieved successfully", user));
+        }
+
+        // ➤ GET ALL USERS
+        @GetMapping
+        public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
+            List<User> users = userService.getAllUsers();
+            return ResponseEntity.ok(new ApiResponse<>("success", "Users retrieved successfully", users));
+        }
+
+        // ➤ UPDATE SINGLE USER
+        @PutMapping("/{id}")
+        public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable Long id, @RequestBody User user) {
+            User updatedUser = userService.updateUser(id, user);
+            return ResponseEntity.ok(new ApiResponse<>("success", "User updated successfully", updatedUser));
+        }
+
+        // ➤ UPDATE MULTIPLE USERS
+        @PutMapping("/bulk-update")
+        public ResponseEntity<ApiResponse<List<User>>> updateUsers(@RequestBody List<User> users) {
+            log.info("API: bulkUpdateUsers count={}", users.size());
+            List<User> updatedUsers = userService.updateUsers(users);
+            return ResponseEntity.ok(new ApiResponse<>("success", "Users updated successfully", updatedUsers));
+        }
+
+
 }
