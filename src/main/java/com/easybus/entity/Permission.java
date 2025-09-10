@@ -20,7 +20,7 @@ public class Permission {
     @Column(name = "permission_id")
     private Long id;
 
-    @Column(name = "permission_uuid", columnDefinition = "BINARY(16)", nullable = false, unique = true,length = 255)
+    @Column(name = "permission_uuid", nullable = false, unique = true,length = 255)
     private String permissionUuid;
 
     
