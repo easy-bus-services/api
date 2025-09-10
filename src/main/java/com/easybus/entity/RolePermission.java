@@ -27,9 +27,9 @@ public class RolePermission {
 
     @Column(name = "role_id", nullable = false)
     private Long roleId;  // FK to Role table
-
-    @Column(name = "permission_id", nullable = false)
-    private Long permissionId;  // FK to Permission table
+//
+//    @Column(name = "permission_id", nullable = false)
+//    private Long permissionId;  // FK to Permission table
 
     @Column(name = "permission_name")
     private String permissionName;

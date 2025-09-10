@@ -30,4 +30,6 @@ public interface PermissionService {
 
 	Permission updatePermission(Long id, Permission permission);
 
+	//void assignPermissionToRole(Long roleId, List<Long> permissionId);
+
 }

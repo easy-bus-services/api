@@ -1,6 +1,7 @@
 package com.easybus.serviceImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,8 +81,8 @@ public class PermissionServiceImpl implements PermissionService {
 
 		RolePermission rp = new RolePermission();
 		rp.setRoleId(roleId);
-		rp.setPermissionId(permissionId);
-		rp.setPermissionName(permission.getPermissionName());
+	//	rp.setPermissionId(permissionId);
+		rp.setPermissionName(permission.getId().toString());
 
 		rolePermissionRepository.save(rp);
 		log.debug(" Assigned permission '{}' to role {}", permission.getPermissionName(), roleId);
@@ -90,9 +91,25 @@ public class PermissionServiceImpl implements PermissionService {
 	@Override
 	public void assignPermissionsToRole(Long roleId, List<Long> permissionIds) {
 		log.info(" Assigning {} permissions to roleId={}", permissionIds.size(), roleId);
-		for (Long pid : permissionIds) {
-			assignPermissionToRole(roleId, pid);
-		}
+
+		
+		 List<Permission> permissions = permissionRepo.findAllById(permissionIds);
+		 if (permissions.size() != permissionIds.size()) {
+	            throw new RuntimeException("Some permissions not found for IDs: " + permissionIds);
+	        }
+		 RolePermission rp = rolePermissionRepository.findByRoleId(roleId)
+	                .orElse(new RolePermission());
+
+		 String permissionString = permissionIds.stream()
+                 .map(String::valueOf) .collect(Collectors.joining(",")); 
+		 rp.setRoleId(roleId);
+		    rp.setPermissionName(permissionString);
+		    rp.setIsActive(true);
+		    rp.setCreatedBy("admin");
+
+		    rolePermissionRepository.save(rp);
+	
+	
 	}
 
 	@Override
