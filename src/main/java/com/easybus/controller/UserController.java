@@ -126,54 +126,6 @@ import jakarta.validation.Valid;
         }
     }
 
-//    // ✅ Get Users (with optional filters)
-//    @GetMapping
-//    public ResponseEntity<ResponseMessage> getUsers(
-//            @RequestParam(required = false) Long id,
-//            @RequestParam(required = false) String email,
-//            @RequestParam(required = false) String phone
-//    ) {
-//        log.info(" Get users request: id={}, email={}, phone={}", id, email, phone);
-//
-//        List<User> users = userService.getUsers(id, email, phone);
-//
-//        if (users == null || users.isEmpty()) {
-//            log.warn(" No users found with given filters");
-//            return ResponseEntity.ok(
-//                    new ResponseMessage(200, Constants.SUCCESS, "No users found with given filters")
-//            );
-//        }
-//
-//        log.info(" Retrieved {} users", users.size());
-//        return ResponseEntity.ok(
-//                new ResponseMessage(200, Constants.SUCCESS, "Users retrieved successfully", users)
-//        );
-//    }
-
-    // ✅ Search Users
-//    @GetMapping("/search")
-//    public ResponseEntity<ResponseMessage> searchUsers(
-//            @RequestParam(required = false) Long id,
-//            @RequestParam(required = false) String email,
-//            @RequestParam(required = false) String phone
-//    ) {
-//        log.info(" Search users request: id={}, email={}, phone={}", id, email, phone);
-//
-//        List<User> users = userService.searchUsers(id, email, phone);
-//
-//        if (users.isEmpty()) {
-//            log.warn(" No users found for given search criteria");
-//            return ResponseEntity.ok(
-//                    new ResponseMessage(200, Constants.SUCCESS, "No users found for given search criteria")
-//            );
-//        }
-//
-//        log.info(" Found {} users for given criteria", users.size());
-//        return ResponseEntity.ok(
-//                new ResponseMessage(200, Constants.SUCCESS, "Users retrieved successfully", users)
-//        );
-//    }
-//	
 	
 	@GetMapping("/searchAll")
     public ResponseEntity<PagedResponse<User>> searchUsers(
