@@ -16,6 +16,8 @@ import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import com.easybus.model.ApiResponse;
 
@@ -86,9 +88,30 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.CONFLICT); // 409 Conflict
     }
     // Handle all other exceptions
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiResponse<String>> handleGenericException(Exception ex) {
+//        ApiResponse<String> response = new ApiResponse<>("error", "Internal Server Error", null);
+//        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
+    
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<String>> handleGenericException(Exception ex) {
-        ApiResponse<String> response = new ApiResponse<>("error", "Internal Server Error", null);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+        // Get the request URI
+        String path = ((ServletWebRequest) request).getRequest().getRequestURI();
+
+        // ✅ Exclude Swagger/OpenAPI endpoints
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            throw new RuntimeException(ex); // rethrow → let Swagger handle it
+        }
+
+        // Generic response for other endpoints
+        Map<String, Object> response = Map.of(
+                "status", "error",
+                "message", "Internal Server Error", // safer than exposing ex.getMessage() in prod
+                "data", null
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+    
 }

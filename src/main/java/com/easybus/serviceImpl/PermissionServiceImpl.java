@@ -34,24 +34,58 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public List<Permission> createPermissions(List<Permission> permissions) {
         log.info(" Creating {} permissions in bulk", permissions.size());
+        for (Permission permission : permissions) {
+        	  Long parentId = permission.getParentId();
+            if (parentId != null &&   parentId > 0) {
+                Permission parent = permissionRepo.findById(parentId)
+                        .orElseThrow(() -> new RuntimeException("Parent not found for ID: " + parentId));
+                permission.setParent(parent);
+            } else {
+                permission.setParent(null);
+            }
+        }
         return permissionRepo.saveAll(permissions);
     }
 
     @Override
     public List<Permission> updatePermissions(List<Permission> permissions) {
         log.info(" Updating {} permissions in bulk", permissions.size());
+        for (Permission permission : permissions) {
+            Long parentId = permission.getParentId();
+
+            //  Only set parent if parentId is provided and > 0
+            if (parentId != null && parentId > 0) {
+                Permission parent = permissionRepo.findById(parentId)
+                        .orElseThrow(() -> new RuntimeException("Parent not found for ID: " + parentId));
+                permission.setParent(parent);
+            } else if (parentId != null && parentId == 0) {
+                // explicitly remove parent if parentId = 0
+                permission.setParent(null);
+            }
+        }
         return permissionRepo.saveAll(permissions);
     }
 
     @Override
     public void deletePermission(Long id) {
         log.warn(" Deleting permission with id={}", id);
+        Permission permission = permissionRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Permission not found with ID: " + id));
+
+        // Optional: detach children before deletion to maintain DB consistency
+        permission.getChildren().forEach(child -> child.setParent(null));
         permissionRepo.deleteById(id);
     }
 
     @Override
     public void deletePermissions(List<Long> ids) {
         log.warn(" Bulk delete for {} permissions", ids.size());
+        List<Permission> permissions = permissionRepo.findAllById(ids);
+
+        // Optional: detach children before deletion
+        for (Permission permission : permissions) {
+            permission.getChildren().forEach(child -> child.setParent(null));
+        }
         permissionRepo.deleteAllById(ids);
     }
 
@@ -128,5 +162,13 @@ public class PermissionServiceImpl implements PermissionService {
         Permission updated = permissionRepo.save(existing);
         log.debug(" Updated permission: {}", updated);
         return updated;
+    }
+    
+    
+    // Get all children for a permission
+    public List<Permission> getChildren(Long parentId) {
+        Permission parent = permissionRepo.findById(parentId)
+                                      .orElseThrow(() -> new RuntimeException("Parent not found"));
+        return permissionRepo.findByParent(parent);
     }
 }
