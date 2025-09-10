@@ -20,8 +20,8 @@ public class Permission {
     @Column(name = "permission_id")
     private Long id;
 
-    @Column(name = "permission_uuid", columnDefinition = "BINARY(16)", nullable = false, unique = true)
-    private UUID permissionUuid;
+    @Column(name = "permission_uuid", columnDefinition = "BINARY(16)", nullable = false, unique = true,length = 255)
+    private String permissionUuid;
 
     
     @Column(name = "permission_name", nullable = false, length = 255)
@@ -50,10 +50,10 @@ public class Permission {
     @Column(name = "is_active", nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean isActive = true;
 
-    // ✅ Constructors
-    public Permission() {
-        this.permissionUuid = UUID.randomUUID(); // auto-generate UUID
-    }
+
+//    public Permission() {
+//        this.permissionUuid = UUID.randomUUID(); // auto-generate UUID
+//    }
 
     
 }
