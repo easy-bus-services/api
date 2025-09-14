@@ -52,8 +52,8 @@ public class User {
 	private String phoneNumber;
 
 	@NotBlank(message = "Password is required")
-	@Column(name = "password_hash", length = 255, nullable = false)
-	private String passwordHash;
+	@Column(name = "password", length = 255, nullable = false)
+	private String password;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)

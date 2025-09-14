@@ -123,8 +123,8 @@ public class UserServiceImpl implements UserService {
 				user.setEmail(req.getEmail());
 			if (req.getPhoneNumber() != null)
 				user.setPhoneNumber(req.getPhoneNumber());
-			if (req.getPasswordHash() != null)
-				user.setPasswordHash(req.getPasswordHash());
+			if (req.getPassword() != null)
+				user.setPassword(req.getPassword());
 			if (req.getStatus() != null)
 				user.setStatus(req.getStatus());
 			if (req.getReferralId() != null)
