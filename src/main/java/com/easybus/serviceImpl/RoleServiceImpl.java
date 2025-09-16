@@ -1,7 +1,6 @@
 package com.easybus.serviceImpl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,19 +26,22 @@ public class RoleServiceImpl implements RoleService {
 	private UserRepository userRepository;
 
 	@Override
-	public Role createRole(Long userId, String roleName, Set<String> permissions) {
+	public Role createRole(Long userId, String roleName, List<String> permissions) {
 		log.info("Creating role '{}' for userId={} with permissions={}", roleName, userId, permissions);
 
-		User user = userRepository.findById(userId).orElseThrow(() -> {
-			log.error("User not found with id={}", userId);
-			return new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-		});
+//		User user = userRepository.findById(userId).orElseThrow(() -> {
+//			log.error("User not found with id={}", userId);
+//			return new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+//		});
 
 		Role role = new Role();
-		role.setUser(user);
+		role.setUserId(userId);
 		role.setName(roleName);
-		role.setPermissionsSet(permissions);
+		
+		String permissionString = String.join(",", permissions);
+	    role.setPermissions(permissionString);
 
+		
 		Role savedRole = roleRepository.save(role);
 		log.info("Role created successfully with roleId={}", savedRole.getId());
 		return savedRole;
@@ -52,7 +54,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public Role updateRole(Long roleId, String roleName, Set<String> permissions) {
+	public Role updateRole(Long roleId, String roleName, List<String> permissions) {
 		log.info("Updating roleId={} with roleName='{}' and permissions={}", roleId, roleName, permissions);
 
 		Role role = roleRepository.findById(roleId).orElseThrow(() -> {
@@ -61,7 +63,10 @@ public class RoleServiceImpl implements RoleService {
 		});
 
 		role.setName(roleName);
-		role.setPermissionsSet(permissions);
+		String permissionString = String.join(",", permissions);
+	    role.setPermissions(permissionString);
+		
+		//role.setPermissionsSet(permissions);
 		Role updatedRole = roleRepository.save(role);
 		log.info("Role updated successfully: roleId={}", updatedRole.getId());
 		return updatedRole;

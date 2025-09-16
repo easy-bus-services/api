@@ -1,5 +1,7 @@
 package com.easybus.serviceImpl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,9 +117,18 @@ public class PermissionServiceImpl implements PermissionService {
 	@Override
 	public void removePermissionFromRole(Long roleId, Long permissionId) {
 		log.info(" Removing permissionId={} from roleId={}", permissionId, roleId);
-		Role role = roleRepo.findById(roleId).orElseThrow();
-		Permission permission = permissionRepo.findById(permissionId).orElseThrow();
-		role.getPermissions().remove(permission);
+	//	Role role = roleRepo.findById(roleId).orElseThrow();
+		Role role = roleRepo.findById(roleId)
+	            .orElseThrow(() -> new IllegalArgumentException("Role not found with id " + roleId));
+//		Permission permission = permissionRepo.findById(permissionId).orElseThrow();
+		 Permission permission = permissionRepo.findById(permissionId)
+		            .orElseThrow(() -> new IllegalArgumentException("Permission not found with id " + permissionId));
+		 List<String> currentPermissions = new ArrayList<>();
+		    if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
+		        currentPermissions = new ArrayList<>(Arrays.asList(role.getPermissions().split(",")));
+		    }
+		    currentPermissions.remove(permission.getPermissionName());
+		//role.getPermissions().remove(permission);
 		roleRepo.save(role);
 		log.debug(" Removed permissionId={} from roleId={}", permissionId, roleId);
 	}
@@ -125,9 +136,23 @@ public class PermissionServiceImpl implements PermissionService {
 	@Override
 	public void removePermissionsFromRole(Long roleId, List<Long> permissionIds) {
 		log.info(" Removing {} permissions from roleId={}", permissionIds.size(), roleId);
-		Role role = roleRepo.findById(roleId).orElseThrow();
+		Role role = roleRepo.findById(roleId)
+	            .orElseThrow(() -> new IllegalArgumentException("Role not found with id " + roleId));
 		List<Permission> permissions = permissionRepo.findAllById(permissionIds);
-		role.getPermissions().removeAll(permissions);
+		List<String> currentPermissions = new ArrayList<>();
+	    if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
+	        currentPermissions = new ArrayList<>(Arrays.asList(role.getPermissions().split(",")));
+	    }
+
+	    // Remove each permission UUID
+	    for (Permission permission : permissions) {
+	        currentPermissions.remove(permission.getPermissionName());
+	    }
+
+	    // Save back as CSV
+	    role.setPermissions(String.join(",", currentPermissions));
+		
+		//role.getPermissions().removeAll(permissions);
 		roleRepo.save(role);
 		log.debug(" Removed {} permissions from roleId={}", permissions.size(), roleId);
 	}

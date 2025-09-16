@@ -1,8 +1,6 @@
 package com.easybus.controller;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +33,8 @@ public class RoleController {
 			@RequestParam List<String> permissions) {
 
 		log.info("API: Create role request for userId={} roleName='{}' permissions={}", userId, roleName, permissions);
-		Set<String> permissionSet = new HashSet<>(permissions);
-		Role role = roleService.createRole(userId, roleName, permissionSet);
+		//Set<String> permissionSet = new HashSet<>(permissions);
+		Role role = roleService.createRole(userId, roleName, permissions);
 		return ResponseEntity.status(201).body(role);
 	}
 
@@ -66,8 +64,8 @@ public class RoleController {
 			@RequestParam List<String> permissions) {
 
 		log.info("API: Update role roleId={} roleName='{}' permissions={}", roleId, roleName, permissions);
-		Set<String> permissionSet = new HashSet<>(permissions);
-		Role role = roleService.updateRole(roleId, roleName, permissionSet);
+		//Set<String> permissionSet = new HashSet<>(permissions);
+		Role role = roleService.updateRole(roleId, roleName, permissions);
 		return ResponseEntity.ok(role);
 	}
 
