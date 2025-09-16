@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,23 +16,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "roles")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class Role {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "role_id", nullable = false)
-	private Long id;
-	@Column(name = "role_name", nullable = false)
+	private Long roleId; 
+	@Column(name = "role_name", nullable = false,unique = true)
 	private String name; // e.g. ROLE_ADMIN, ROLE_USER
 
 	 @Column(name = "user_id", nullable = false)
@@ -56,6 +57,23 @@ public class Role {
     @Column(name = "assigned_at", updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private LocalDateTime assignedAt;
     
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+    @Column(name = "update_date")
+	private LocalDateTime updatedDate;
+	
+	@CreatedBy
+    @Column(name = "created_by", length = 255)
+    private String createdBy;
+	@LastModifiedBy
+    @Column(name = "updated_by", length = 255)
+    private String updatedBy;
+
+	@Column(name = "deleted_by")
+	private String deletedBy;
+	
 //
 //    @ManyToMany(fetch = FetchType.EAGER)
 //    @JoinTable(

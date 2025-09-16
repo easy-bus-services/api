@@ -1,55 +1,55 @@
-//// UserRole.java
-//package com.easybus.entity;
-//
-//import java.time.LocalDateTime;
-//
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.GenerationType;
-//import jakarta.persistence.Id;
-//import jakarta.persistence.Lob;
-//import jakarta.persistence.Table;
-//import lombok.AllArgsConstructor;
-//import lombok.Builder;
-//import lombok.Getter;
-//import lombok.NoArgsConstructor;
-//import lombok.Setter;
-//
-//@Entity
-//@Table(name = "user_role")
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
-//public class UserRole {
-//
-//	   @Id
-//	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//	    @Column(name = "role_id")
-//	    private Long roleId;
-//
-//	    @Column(name = "user_id", nullable = false)
-//	    private Long userId;
-//
-//	    @Column(name = "role_name", length = 255, nullable = false)
-//	    private String roleName;
-//
-//	    @Lob
-//	    @Column(name = "permissions")
-//	    private String permissions;
-//
-//	    @Column(name = "assigned_at")
-//	    private LocalDateTime assignedAt;
-//
-//	    @Column(name = "created_by", length = 255)
-//	    private String createdBy;
-//
-//	    @Column(name = "updated_by", length = 255)
-//	    private String updatedBy;
-//
-//	    // Duplicate column `roleName` exists, so mapping it as another field
-//	    @Column(name = "roleName", length = 255)
-//	    private String roleNameDuplicate;
-//}
+
+package com.easybus.entity;
+
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Entity
+@Table(name = "user_roles")
+@Data
+public class UserRole {
+
+	  @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long userRoleId;
+
+	    @ManyToOne
+	    @JoinColumn(name = "user_id", nullable = false)
+	    private User user;
+
+	    @ManyToOne
+	    @JoinColumn(name = "role_id", nullable = false)
+	    private Role role;
+
+	    @Column(name = "assigned_at", updatable = false)
+	    private LocalDateTime assignedAt = LocalDateTime.now();
+
+	    @Column(name = "deleted_at")
+	    private LocalDateTime deletedAt;
+	    @Column(name = "update_date")
+		private LocalDateTime updatedDate;
+		
+		@CreatedBy
+	    @Column(name = "created_by", length = 255)
+	    private String createdBy;
+		@LastModifiedBy
+	    @Column(name = "updated_by", length = 255)
+	    private String updatedBy;
+	
+		@Column(name = "deleted_by")
+		private String deletedBy;
+		
+
+}

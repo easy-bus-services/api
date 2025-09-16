@@ -2,8 +2,6 @@ package com.easybus.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-
 import com.easybus.entity.User;
 import com.easybus.model.PagedResponse;
 

@@ -1,5 +1,6 @@
 package com.easybus.serviceImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.easybus.entity.Role;
-import com.easybus.entity.User;
 import com.easybus.repository.RoleRepository;
 import com.easybus.repository.UserRepository;
 import com.easybus.service.RoleService;
@@ -43,7 +43,7 @@ public class RoleServiceImpl implements RoleService {
 
 		
 		Role savedRole = roleRepository.save(role);
-		log.info("Role created successfully with roleId={}", savedRole.getId());
+		log.info("Role created successfully with roleId={}", savedRole.getRoleId());
 		return savedRole;
 	}
 
@@ -68,17 +68,21 @@ public class RoleServiceImpl implements RoleService {
 		
 		//role.setPermissionsSet(permissions);
 		Role updatedRole = roleRepository.save(role);
-		log.info("Role updated successfully: roleId={}", updatedRole.getId());
+		log.info("Role updated successfully: roleId={}", updatedRole.getRoleId());
 		return updatedRole;
 	}
 
 	@Override
 	public void deleteRole(Long roleId) {
 		log.info("Deleting role with roleId={}", roleId);
-		if (!roleRepository.existsById(roleId)) {
-			log.error("Role not found with id={}", roleId);
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found");
-		}
+		
+		  Role role = roleRepository.findById(roleId)
+		            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found"));
+
+		  role.setIsDeleted(true);
+		    role.setDeletedAt(LocalDateTime.now());
+
+		    roleRepository.save(role);
 		roleRepository.deleteById(roleId);
 		log.info("Role deleted successfully: roleId={}", roleId);
 	}
