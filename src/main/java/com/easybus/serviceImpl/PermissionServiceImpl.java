@@ -1,178 +1,319 @@
 package com.easybus.serviceImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.easybus.entity.Permission;
 import com.easybus.entity.Role;
-import com.easybus.entity.RolePermission;
 import com.easybus.repository.PermissionRepository;
 import com.easybus.repository.RolePermissionRepository;
 import com.easybus.repository.RoleRepository;
 import com.easybus.service.PermissionService;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class PermissionServiceImpl implements PermissionService {
-
 	private static final Logger log = LoggerFactory.getLogger(PermissionServiceImpl.class);
+	@Autowired
+	private PermissionRepository permissionRepository;
 
 	@Autowired
-	PermissionRepository permissionRepo;
+	private RolePermissionRepository rolePermissionRepository;
+
 	@Autowired
-	RoleRepository roleRepo;
-	@Autowired
-	RolePermissionRepository rolePermissionRepository;
+	RoleRepository roleRepository;
+	// -------------------- CRUD --------------------
 
 	@Override
 	public Permission createPermission(Permission permission) {
 		log.info(" Creating new permission: {}", permission.getPermissionName());
-		return permissionRepo.save(permission);
+		if (permissionRepository.existsByPermissionName(permission.getPermissionName())) {
+			throw new RuntimeException("Permission already exists with name: " + permission.getPermissionName());
+		}
+		return permissionRepository.save(permission);
 	}
 
 	@Override
 	public List<Permission> createPermissions(List<Permission> permissions) {
 		log.info(" Creating {} permissions in bulk", permissions.size());
-		return permissionRepo.saveAll(permissions);
+		return permissionRepository.saveAll(permissions);
+	}
+
+	@Override
+	public Permission updatePermission(Long id, Permission permission) {
+		log.info(" Updating {} permissions in bulk", id);
+		Permission existing = permissionRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Permission not found with ID: " + id));
+
+		existing.setPermissionName(permission.getPermissionName());
+		existing.setIsActive(permission.getIsActive());
+		existing.setUpdatedBy(permission.getUpdatedBy());
+		existing.setVersion(existing.getVersion() + 1);
+		return permissionRepository.save(existing);
 	}
 
 	@Override
 	public List<Permission> updatePermissions(List<Permission> permissions) {
 		log.info(" Updating {} permissions in bulk", permissions.size());
-		return permissionRepo.saveAll(permissions);
+		return permissions.stream().map(p -> updatePermission(p.getId(), p)).collect(Collectors.toList());
 	}
 
 	@Override
 	public void deletePermission(Long id) {
 		log.warn(" Deleting permission with id={}", id);
-		permissionRepo.deleteById(id);
+		permissionRepository.deleteById(id);
 	}
 
 	@Override
 	public void deletePermissions(List<Long> ids) {
 		log.warn(" Bulk delete for {} permissions", ids.size());
-		permissionRepo.deleteAllById(ids);
+		permissionRepository.deleteAllById(ids);
 	}
 
 	@Override
 	public List<Permission> getAllPermissions() {
 		log.info(" Fetching all permissions");
-		return permissionRepo.findAll();
+		return permissionRepository.findAll();
 	}
 
 	@Override
 	public Permission getPermissionById(Long id) {
 		log.info(" Fetching permission with id={}", id);
-		return permissionRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Permission not found with id: " + id));
+		return permissionRepository.findById(id).orElse(null);
 	}
 
-	@Override
-	public void assignPermissionToRole(Long roleId, Long permissionId) {
-		log.info(" Assigning permissionId={} to roleId={}", permissionId, roleId);
+	// -------------------- ASSIGN / REMOVE --------------------
 
-		Permission permission = permissionRepo.findById(permissionId)
-				.orElseThrow(() -> new RuntimeException("Permission not found"));
+//	@Override
+//	@Transactional
+//	public void assignPermissionToRole(Long roleId, List<Long> permissionIds) {
+//	    log.info("Assigning permissionIds={} to roleId={}", permissionIds, roleId);
+//
+//	 // Fetch role from DB
+//	    Role role = roleRepository.findById(roleId)
+//	            .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
+//
+//	    // Fetch all permissions from DB
+//	    List<Permission> permissions = permissionRepository.findAllById(permissionIds);
+//	    if (permissions.size() != permissionIds.size()) {
+//	        throw new RuntimeException("Some permissions not found for IDs: " + permissionIds);
+//	    }
+//
+//	    // Assign each permission
+//	    for (Permission permission : permissions) {
+//	        boolean exists = rolePermissionRepository.existsByRoleAndPermission(role, permission);
+//	        if (!exists) {
+//	            RolePermission rp = new RolePermission();
+//	            rp.setRole(role);               // must be managed entity
+//	            rp.setPermission(permission);   // must be managed entity
+//	            rolePermissionRepository.save(rp);
+//	            log.debug("Assigned permissionId={} to roleId={}", permission.getId(), roleId);
+//	        } else {
+//	            log.warn("PermissionId={} already assigned to roleId={}", permission.getId(), roleId);
+//	        }
+//	    }
+//	}
+//
+//
+////	@Override
+////	@Transactional
+////	public void assignPermissionsToRole(Long roleId, List<Long> permissionIds) {
+////	    for (Long permissionId : permissionIds) {
+////	        assignPermissionToRole(roleId, permissionId);
+////	    }
+////	}
+//
+//	@Override
+//	@Transactional
+//	public void removePermissionFromRole(Long roleId, Long permissionId) {
+//	    log.info("Removing permissionId={} from roleId={}", permissionId, roleId);
+//
+//	    // Fetch role
+//	    Role role = roleRepository.findById(roleId)
+//	            .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
+//
+//	    // Fetch permission
+//	    Permission permission = permissionRepository.findById(permissionId)
+//	            .orElseThrow(() -> new RuntimeException("Permission not found with ID: " + permissionId));
+//
+//	    // Find RolePermission mapping
+//	    RolePermission rolePermission = rolePermissionRepository.findByRoleAndPermission(role, permission)
+//	            .orElseThrow(() -> new RuntimeException(
+//	                    "PermissionId " + permissionId + " is not assigned to roleId " + roleId));
+//
+//	    // Delete mapping
+//	    rolePermissionRepository.delete(rolePermission);
+//
+//	    log.debug("Removed permissionId={} from roleId={}", permissionId, roleId);
+//	
+//	}
+//
+//	@Override
+//	@Transactional
+//	public void removePermissionsFromRole(Long roleId, List<Long> permissionIds) {
+//	    for (Long permissionId : permissionIds) {
+//	        removePermissionFromRole(roleId, permissionId);
+//	    }
+//	}
 
-		RolePermission rp = new RolePermission();
-		rp.setRoleId(roleId);
-	//	rp.setPermissionId(permissionId);
-		rp.setPermissionName(permission.getId().toString());
-
-		rolePermissionRepository.save(rp);
-		log.debug(" Assigned permission '{}' to role {}", permission.getPermissionName(), roleId);
-	}
-
-	@Override
-	public void assignPermissionsToRole(Long roleId, List<Long> permissionIds) {
-		log.info(" Assigning {} permissions to roleId={}", permissionIds.size(), roleId);
-
-		
-		 List<Permission> permissions = permissionRepo.findAllById(permissionIds);
-		 if (permissions.size() != permissionIds.size()) {
-	            throw new RuntimeException("Some permissions not found for IDs: " + permissionIds);
-	        }
-		 RolePermission rp = rolePermissionRepository.findByRoleId(roleId)
-	                .orElse(new RolePermission());
-
-		 String permissionString = permissionIds.stream()
-                 .map(String::valueOf) .collect(Collectors.joining(",")); 
-		 rp.setRoleId(roleId);
-		    rp.setPermissionName(permissionString);
-		    rp.setIsActive(true);
-		    rp.setCreatedBy("admin");
-
-		    rolePermissionRepository.save(rp);
 	
-	
-	}
+	   // ---------------- Bulk Assign from List ----------------
+//    @Override
+//    @Transactional
+//    public void assignPermissionToRole(Long roleId, List<Long> permissionIds) {
+//        log.info("Assigning permissions={} to roleId={}", permissionIds, roleId);
+//
+//        Role role = roleRepository.findById(roleId)
+//                .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
+//
+//        List<Permission> permissions = permissionRepository.findAllById(permissionIds);
+//        if (permissions.size() != permissionIds.size()) {
+//            throw new RuntimeException("Some permissions not found for IDs: " + permissionIds);
+//        }
+//
+//        for (Permission permission : permissions) {
+//            boolean exists = rolePermissionRepository.existsByRoleAndPermission(role, permission);
+//            if (!exists) {
+//                RolePermission rp = new RolePermission();
+//                rp.setRole(role);
+//                rp.setPermission(permission);
+//                rolePermissionRepository.save(rp);
+//                log.debug("Assigned permissionId={} to roleId={}", permission.getId(), roleId);
+//            } else {
+//                log.warn("PermissionId={} already assigned to roleId={}", permission.getId(), roleId);
+//            }
+//        }
+//    }
+//
+//    // ---------------- Assign from CSV ----------------
+//    @Override
+//    @Transactional
+//    public void assignPermissionsFromCsv(Long roleId, String permissionIdsCsv) {
+//        if (permissionIdsCsv == null || permissionIdsCsv.isBlank()) {
+//            throw new RuntimeException("No permissions provided in CSV");
+//        }
+//
+//        List<Long> permissionIds = Arrays.stream(permissionIdsCsv.split(","))
+//                                         .map(String::trim)
+//                                         .map(Long::parseLong)
+//                                         .toList();
+//
+//        assignPermissionToRole(roleId, permissionIds);
+//    }
+//
+//    // ---------------- Remove Single Permission ----------------
+//    @Override
+//    @Transactional
+//    public void removePermissionFromRole(Long roleId, Long permissionId) {
+//        log.info("Removing permissionId={} from roleId={}", permissionId, roleId);
+//
+//        RolePermission rp = rolePermissionRepository.findByRole_IdAndPermission_Id(roleId, permissionId)
+//                .orElseThrow(() -> new RuntimeException(
+//                        "PermissionId " + permissionId + " is not assigned to roleId " + roleId));
+//
+//        rolePermissionRepository.delete(rp);
+//        log.debug("Removed permissionId={} from roleId={}", permissionId, roleId);
+//    }
+//
+//    // ---------------- Bulk Remove ----------------
+//    @Override
+//    @Transactional
+//    public void removePermissionsFromRole(Long roleId, List<Long> permissionIds) {
+//        log.info("Removing permissions={} from roleId={}", permissionIds, roleId);
+//
+//        for (Long permissionId : permissionIds) {
+//            removePermissionFromRole(roleId, permissionId);
+//        }
+//    }
+//
+//    // ---------------- Remove from CSV ----------------
+//    @Override
+//    @Transactional
+//    public void removePermissionsFromCsv(Long roleId, String permissionIdsCsv) {
+//        if (permissionIdsCsv == null || permissionIdsCsv.isBlank()) {
+//            throw new RuntimeException("No permissions provided in CSV");
+//        }
+//
+//        List<Long> permissionIds = Arrays.stream(permissionIdsCsv.split(","))
+//                                         .map(String::trim)
+//                                         .map(Long::parseLong)
+//                                         .toList();
+//
+//        removePermissionsFromRole(roleId, permissionIds);
+//    }
+//    
+//    
+//    
+    
+	  // Assign multiple permissions to a role
+    @Transactional
+    @Override
+    public List<Long> assignPermissionsToRole(Long roleId, List<Long> permissionIds) {
+//        Role role = roleRepository.findById(roleId)
+//                .orElseThrow(() -> new RuntimeException("Role not found: " + roleId));
 
-	@Override
-	public void removePermissionFromRole(Long roleId, Long permissionId) {
-		log.info(" Removing permissionId={} from roleId={}", permissionId, roleId);
-	//	Role role = roleRepo.findById(roleId).orElseThrow();
-		Role role = roleRepo.findById(roleId)
-	            .orElseThrow(() -> new IllegalArgumentException("Role not found with id " + roleId));
-//		Permission permission = permissionRepo.findById(permissionId).orElseThrow();
-		 Permission permission = permissionRepo.findById(permissionId)
-		            .orElseThrow(() -> new IllegalArgumentException("Permission not found with id " + permissionId));
-		 List<String> currentPermissions = new ArrayList<>();
-		    if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
-		        currentPermissions = new ArrayList<>(Arrays.asList(role.getPermissions().split(",")));
-		    }
-		    currentPermissions.remove(permission.getPermissionName());
-		//role.getPermissions().remove(permission);
-		roleRepo.save(role);
-		log.debug(" Removed permissionId={} from roleId={}", permissionId, roleId);
-	}
+        Role role = roleRepository.findActiveRoleWithPermissions(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found or deleted: " + roleId));
+        List<Permission> permissions = permissionRepository.findAllById(permissionIds);
+        if (permissions.size() != permissionIds.size()) {
+          throw new RuntimeException("Some permissions not found for IDs: " + permissionIds);
+      }
+        List<Long> assignedIds = new ArrayList<>();
 
-	@Override
-	public void removePermissionsFromRole(Long roleId, List<Long> permissionIds) {
-		log.info(" Removing {} permissions from roleId={}", permissionIds.size(), roleId);
-		Role role = roleRepo.findById(roleId)
-	            .orElseThrow(() -> new IllegalArgumentException("Role not found with id " + roleId));
-		List<Permission> permissions = permissionRepo.findAllById(permissionIds);
-		List<String> currentPermissions = new ArrayList<>();
-	    if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
-	        currentPermissions = new ArrayList<>(Arrays.asList(role.getPermissions().split(",")));
-	    }
+        for (Permission permission : permissions) {
+            if (!role.getPermissions().contains(permission)) {
+                role.getPermissions().add(permission);
+                assignedIds.add(permission.getId());
+            }
+        }
 
-	    // Remove each permission UUID
-	    for (Permission permission : permissions) {
-	        currentPermissions.remove(permission.getPermissionName());
-	    }
+        roleRepository.save(role);
+        return assignedIds;
+    }
 
-	    // Save back as CSV
-	    role.setPermissions(String.join(",", currentPermissions));
-		
-		//role.getPermissions().removeAll(permissions);
-		roleRepo.save(role);
-		log.debug(" Removed {} permissions from roleId={}", permissions.size(), roleId);
-	}
+    // Remove multiple permissions from a role
+    @Override
+    @Transactional
+    public List<Long> removePermissionsFromRole(Long roleId, List<Long> permissionIds) {
+//        Role role = roleRepository.findById(roleId)
+//                .orElseThrow(() -> new RuntimeException("Role not found: " + roleId));
 
-	@Override
-	@Transactional
-	public Permission updatePermission(Long id, Permission permission) {
-		log.info(" Updating permission with id={}", id);
+        Role role = roleRepository.findActiveRoleWithPermissions(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found or deleted: " + roleId));
 
-		Permission existing = permissionRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Permission not found with id: " + id));
+        List<Permission> permissions = permissionRepository.findAllById(permissionIds);
 
-		existing.setPermissionName(permission.getPermissionName());
-		existing.setUpdatedBy(permission.getUpdatedBy());
-		existing.setIsActive(permission.getIsActive());
-		existing.setVersion(existing.getVersion() + 1); // increment version
+        List<Long> removedIds = new ArrayList<>();
 
-		Permission updated = permissionRepo.save(existing);
-		log.debug(" Updated permission: {}", updated);
-		return updated;
-	}
+        for (Permission permission : permissions) {
+            if (role.getPermissions().contains(permission)) {
+                role.getPermissions().remove(permission);
+                removedIds.add(permission.getId());
+            }
+        }
+
+        roleRepository.save(role);
+        return removedIds;
+    }
+
+    // Get all permissions of a role
+    @Override
+    public Set<Permission> getPermissionsByRole(Long roleId) {
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + roleId));
+        return role.getPermissions();
+    }
 
 }
+
+
+

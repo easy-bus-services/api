@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 	List<User> findByEmailIn(List<String> emails);
 	  Optional<User> findByReferralId(String referralId);
 	  boolean existsByReferralId(String referralId);
+	  Optional<User> findByEmail(String email);
 }

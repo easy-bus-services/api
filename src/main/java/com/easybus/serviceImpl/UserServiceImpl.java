@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.easybus.entity.User;
@@ -28,7 +30,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 	private final ModelMapper modelMapper = new ModelMapper();
-
+    @Autowired
+    private PasswordEncoder passwordEncoder; 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -102,6 +105,7 @@ public class UserServiceImpl implements UserService {
 		        }
 			u.setStatus(User.Status.ACTIVE);
 			u.setCreatedDate(now);
+			u.setPassword(passwordEncoder.encode(u.getPassword()));
 			u.setCreatedBy("system"); // replace with logged-in user if available
 		});
 
@@ -217,5 +221,16 @@ public class UserServiceImpl implements UserService {
 	        return referralId;
 	    }
 	
+	    @Override
+	    public boolean login(String email, String rawPassword) {
+	        User user = userRepository.findByEmail(email)
+	                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+	        if (passwordEncoder.matches(rawPassword, user.getPassword())) {
+	            return true; // ✅ login success
+	        } else {
+	            return false; // ❌ wrong password
+	        }
+	    }
 }
 

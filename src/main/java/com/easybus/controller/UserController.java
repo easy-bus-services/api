@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -187,5 +188,13 @@ import jakarta.validation.Valid;
             return ResponseEntity.ok(new ApiResponse<>(200,"success", "Users updated successfully", updatedUsers));
         }
 
+        @PostMapping("/login")
+        public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) {
+            boolean success = userService.login(email, password);
+            if (success) {
+                return ResponseEntity.ok("Login successful ✅");
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials ❌");
+        }
 
 }

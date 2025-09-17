@@ -23,6 +23,7 @@ public class UserRole {
 
 	  @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	  @Column(name = "user_role_id")
 	    private Long userRoleId;
 
 	    @ManyToOne
@@ -38,7 +39,7 @@ public class UserRole {
 
 	    @Column(name = "deleted_at")
 	    private LocalDateTime deletedAt;
-	    @Column(name = "update_date")
+	    @Column(name = "updated_at")
 		private LocalDateTime updatedDate;
 		
 		@CreatedBy

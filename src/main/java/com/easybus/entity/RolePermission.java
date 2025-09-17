@@ -4,20 +4,25 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 
 @Entity
-@Table(name = "role_permissions")
+@Table(
+    name = "role_permissions",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uq_role_permission", columnNames = {"role_id", "permission_id"})
+    }
+)
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class RolePermission {
 
     @Id
@@ -25,24 +30,25 @@ public class RolePermission {
     @Column(name = "role_permission_id")
     private Long id;
 
-    @Column(name = "role_id", nullable = false)
-    private Long roleId;  // FK to Role table
-//
-//    @Column(name = "permission_id", nullable = false)
-//    private Long permissionId;  // FK to Permission table
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "role_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_role_permissions_role"))
+    private Role role;
 
-    @Column(name = "permission_name")
-    private String permissionName;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "permission_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_role_permissions_permission"))
+    private Permission permission;
 
-    @Column(name = "assigned_at", updatable = false, insertable = false,
+    @Column(name = "assigned_at", nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime assignedAt;
 
-    @Column(name = "created_at", updatable = false, insertable = false,
+    @Column(name = "created_at", nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", insertable = false,
+    @Column(name = "updated_at", nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
@@ -55,7 +61,9 @@ public class RolePermission {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
-}
 
+    // Getters and setters
+    // equals() & hashCode() based on role + permission if needed
+}

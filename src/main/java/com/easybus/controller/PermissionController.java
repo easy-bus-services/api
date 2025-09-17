@@ -1,6 +1,7 @@
 package com.easybus.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,14 +149,14 @@ public class PermissionController {
 
     // -------------------- ASSIGN / REMOVE --------------------
 
-    @PostMapping("/assign/{roleId}/{permissionId}")
-    public ResponseEntity<ResponseMessage> assignPermission(@PathVariable Long roleId,
-                                                            @PathVariable Long permissionId) {
-        log.info(" Assign Permission ID {} to Role ID {}", permissionId, roleId);
-        permissionService.assignPermissionToRole(roleId, permissionId);
-        return ResponseEntity.ok(
-                new ResponseMessage(200, Constants.SUCCESS, "Permission assigned successfully"));
-    }
+//    @PostMapping("/assign/{roleId}")
+//    public ResponseEntity<ResponseMessage> assignPermission(@PathVariable Long roleId,
+//    		@RequestBody List<Long> permissionId) {
+//        log.info(" Assign Permission ID {} to Role ID {}", permissionId, roleId);
+//        permissionService.assignPermissionToRole(roleId, permissionId);
+//        return ResponseEntity.ok(
+//                new ResponseMessage(200, Constants.SUCCESS, "Permission assigned successfully"));
+//    }
 
     @PostMapping("/assign/bulk/{roleId}")
     public ResponseEntity<ResponseMessage> assignPermissions(@PathVariable Long roleId,
@@ -165,19 +166,21 @@ public class PermissionController {
             return ResponseEntity.badRequest().body(
                     new ResponseMessage(400, Constants.FAILURE, "Permission IDs list cannot be empty"));
         }
-        permissionService.assignPermissionsToRole(roleId, permissionIds);
+   //     permissionService.assignPermissionToRole(roleId, permissionIds);
+        
+        List<Long> assigned = permissionService.assignPermissionsToRole(roleId, permissionIds);
         return ResponseEntity.ok(
                 new ResponseMessage(200, Constants.SUCCESS, "Permissions assigned successfully"));
     }
-
-    @DeleteMapping("/remove/{roleId}/{permissionId}")
-    public ResponseEntity<ResponseMessage> removePermission(@PathVariable Long roleId,
-                                                            @PathVariable Long permissionId) {
-        log.warn(" Remove Permission ID {} from Role ID {}", permissionId, roleId);
-        permissionService.removePermissionFromRole(roleId, permissionId);
-        return ResponseEntity.ok(
-                new ResponseMessage(200, Constants.SUCCESS, "Permission removed successfully"));
-    }
+//
+//    @DeleteMapping("/remove/{roleId}/{permissionId}")
+//    public ResponseEntity<ResponseMessage> removePermission(@PathVariable Long roleId,
+//                                                            @PathVariable Long permissionId) {
+//        log.warn(" Remove Permission ID {} from Role ID {}", permissionId, roleId);
+//        permissionService.removePermissionFromRole(roleId, permissionId);
+//        return ResponseEntity.ok(
+//                new ResponseMessage(200, Constants.SUCCESS, "Permission removed successfully"));
+//    }
 
     @DeleteMapping("/remove/bulk/{roleId}")
     public ResponseEntity<ResponseMessage> removePermissions(@PathVariable Long roleId,
@@ -187,8 +190,135 @@ public class PermissionController {
             return ResponseEntity.badRequest().body(
                     new ResponseMessage(400, Constants.FAILURE, "Permission IDs list cannot be empty"));
         }
-        permissionService.removePermissionsFromRole(roleId, permissionIds);
+//        permissionService.removePermissionsFromRole(roleId, permissionIds);
+        List<Long> removed = permissionService.removePermissionsFromRole(roleId, permissionIds);
         return ResponseEntity.ok(
                 new ResponseMessage(200, Constants.SUCCESS, "Permissions removed successfully"));
     }
+    
+    
+//    // ---------------- Assign Permissions by List ----------------
+//    @PostMapping("/assign/{roleId}")
+//    public ResponseEntity<ResponseMessage> assignPermissions(
+//            @PathVariable Long roleId,
+//            @RequestBody List<Long> permissionIds) {
+//
+//        log.info("Assigning permissions={} to roleId={}", permissionIds, roleId);
+//
+//        if (permissionIds == null || permissionIds.isEmpty()) {
+//            return ResponseEntity.badRequest().body(
+//                    new ResponseMessage(400, "FAILURE", "Permission IDs list cannot be empty"));
+//        }
+//
+//        try {
+//            permissionService.assignPermissionToRole(roleId, permissionIds);
+//            return ResponseEntity.ok(
+//                    new ResponseMessage(200, "SUCCESS", "Permissions assigned successfully"));
+//        } catch (Exception e) {
+//            log.error("Error assigning permissions: {}", e.getMessage(), e);
+//            return ResponseEntity.internalServerError().body(
+//                    new ResponseMessage(500, "FAILURE", e.getMessage()));
+//        }
+//    }
+//
+//    // ---------------- Assign Permissions from CSV ----------------
+//    @PostMapping("/assign/csv/{roleId}")
+//    public ResponseEntity<ResponseMessage> assignPermissionsFromCsv(
+//            @PathVariable Long roleId,
+//            @RequestParam String permissionIdsCsv) {
+//
+//        log.info("Assigning permissions from CSV={} to roleId={}", permissionIdsCsv, roleId);
+//
+//        if (permissionIdsCsv == null || permissionIdsCsv.isBlank()) {
+//            return ResponseEntity.badRequest().body(
+//                    new ResponseMessage(400, "FAILURE", "Permission IDs CSV cannot be empty"));
+//        }
+//
+//        try {
+//            permissionService.assignPermissionsFromCsv(roleId, permissionIdsCsv);
+//            return ResponseEntity.ok(
+//                    new ResponseMessage(200, "SUCCESS", "Permissions assigned successfully from CSV"));
+//        } catch (Exception e) {
+//            log.error("Error assigning permissions from CSV: {}", e.getMessage(), e);
+//            return ResponseEntity.internalServerError().body(
+//                    new ResponseMessage(500, "FAILURE", e.getMessage()));
+//        }
+//    }
+//
+//    // ---------------- Remove Single Permission ----------------
+//    @DeleteMapping("/remove/{roleId}/{permissionId}")
+//    public ResponseEntity<ResponseMessage> removePermission(
+//            @PathVariable Long roleId,
+//            @PathVariable Long permissionId) {
+//
+//        log.info("Removing permissionId={} from roleId={}", permissionId, roleId);
+//
+//        try {
+//            permissionService.removePermissionFromRole(roleId, permissionId);
+//            return ResponseEntity.ok(
+//                    new ResponseMessage(200, "SUCCESS", "Permission removed successfully"));
+//        } catch (Exception e) {
+//            log.error("Error removing permission: {}", e.getMessage(), e);
+//            return ResponseEntity.internalServerError().body(
+//                    new ResponseMessage(500, "FAILURE", e.getMessage()));
+//        }
+//    }
+//
+//    // ---------------- Remove Permissions by List ----------------
+//    @DeleteMapping("/remove/{roleId}")
+//    public ResponseEntity<ResponseMessage> removePermissions(
+//            @PathVariable Long roleId,
+//            @RequestBody List<Long> permissionIds) {
+//
+//        log.info("Removing permissions={} from roleId={}", permissionIds, roleId);
+//
+//        if (permissionIds == null || permissionIds.isEmpty()) {
+//            return ResponseEntity.badRequest().body(
+//                    new ResponseMessage(400, "FAILURE", "Permission IDs list cannot be empty"));
+//        }
+//
+//        try {
+//            permissionService.removePermissionsFromRole(roleId, permissionIds);
+//            return ResponseEntity.ok(
+//                    new ResponseMessage(200, "SUCCESS", "Permissions removed successfully"));
+//        } catch (Exception e) {
+//            log.error("Error removing permissions: {}", e.getMessage(), e);
+//            return ResponseEntity.internalServerError().body(
+//                    new ResponseMessage(500, "FAILURE", e.getMessage()));
+//        }
+//    }
+
+   
+    
+//
+//    // Assign permissions
+//    @PostMapping("/{roleId}/permissions/assign")
+//    public ResponseEntity<ResponseMessage> assignPermissions(
+//            @PathVariable Long roleId,
+//            @RequestBody List<Long> permissionIds) {
+//
+//        List<Long> assigned = permissionService.assignPermissionsToRole(roleId, permissionIds);
+//        return ResponseEntity.ok(
+//                new ResponseMessage(200, "SUCCESS", "Permissions assigned successfully", assigned));
+//    }
+
+    // Remove permissions
+//    @DeleteMapping("/{roleId}/permissions/remove")
+//    public ResponseEntity<ResponseMessage> removePermissions(
+//            @PathVariable Long roleId,
+//            @RequestBody List<Long> permissionIds) {
+//
+//        List<Long> removed = permissionService.removePermissionsFromRole(roleId, permissionIds);
+//        return ResponseEntity.ok(
+//                new ResponseMessage(200, "SUCCESS", "Permissions removed successfully", removed));
+//    }
+
+    // Get all permissions of a role
+    @GetMapping("/{roleId}/permissions")
+    public ResponseEntity<ResponseMessage> getPermissions(@PathVariable Long roleId) {
+        Set<Permission> permissions = permissionService.getPermissionsByRole(roleId);
+        return ResponseEntity.ok(
+                new ResponseMessage(200, "SUCCESS", "Permissions retrieved successfully", permissions));
+    }
+
 }

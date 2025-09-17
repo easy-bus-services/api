@@ -29,5 +29,7 @@ public interface UserService {
 	PagedResponse<User> searchUsers(String email, String name, String status, String phonenumber, int page, int size,
 			String sortBy);
 
+	boolean login(String email, String rawPassword);
+
 
 }
