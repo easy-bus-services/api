@@ -1,0 +1,705 @@
+{
+	"info": {
+		"_postman_id": "790d0162-70b4-4dc5-9f07-0b58db1384f4",
+		"name": "EasyBus",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12928403"
+	},
+	"item": [
+		{
+			"name": "http://localhost:9091/api/users/search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/api/users/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"search"
+					]
+				},
+				"description": "get"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/users/bulk",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "        [\r\n        {\r\n            \"fullName\": \"Rao\",\r\n            \"email\": \"rao@gmail.com.com\",\r\n            \"phoneNumber\": \"9012345678\",\r\n            \"passwordHash\": \"pass123\"\r\n             \r\n        }\r\n        ]\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/users/create-bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"create-bulk"
+					]
+				},
+				"description": "Create"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/users/bulk-update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"id\": 18,\r\n    \"fullName\": \"vali shik\",\r\n    \"phoneNumber\": \"999999779\"\r\n  },\r\n  {\r\n    \"id\": 19,\r\n    \"email\": \"newemail@example.com\",\r\n    \"isActive\": false\r\n  }\r\n]\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/users/bulk-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"bulk-update"
+					]
+				},
+				"description": "update"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/users/bulk-delete?ids=5&ids=6",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[5,6]"
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/users/bulk-delete?ids=5&ids=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"bulk-delete"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "5"
+						},
+						{
+							"key": "ids",
+							"value": "6"
+						}
+					]
+				},
+				"description": "DeletedUSer"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/users/search",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/users/searchAll",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"searchAll"
+					]
+				},
+				"description": "SearchAll"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/users/search",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/users/searchAll?name=shik&status=INACTIVE&page=0&size=5&sortBy=email",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"searchAll"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "shik"
+						},
+						{
+							"key": "status",
+							"value": "INACTIVE"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "5"
+						},
+						{
+							"key": "sortBy",
+							"value": "email"
+						}
+					]
+				},
+				"description": "Searchname"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/users/search",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/users/searchAll?name=shik&status=INACTIVE&page=0&size=5&sortBy=email",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"searchAll"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "shik"
+						},
+						{
+							"key": "status",
+							"value": "INACTIVE"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "5"
+						},
+						{
+							"key": "sortBy",
+							"value": "email"
+						}
+					]
+				},
+				"description": "SearchALL"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/users/create-bulk",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "        [\r\n        {\r\n            \"fullName\": \"Rao\",\r\n            \"email\": \"rao@gmail.com.com\",\r\n            \"phoneNumber\": \"9012345678\",\r\n            \"passwordHash\": \"pass123\"\r\n             \r\n        }\r\n        ]\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/users/create-bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"users",
+						"create-bulk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/roles/update/16?roleName=system1",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/api/roles/update/16?roleName=system1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"roles",
+						"update",
+						"16"
+					],
+					"query": [
+						{
+							"key": "roleName",
+							"value": "system1"
+						}
+					]
+				},
+				"description": "UpdateRole"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"permissionUuid\": \"perm-1008\",\r\n  \"permissionName\": \"USER_CREATE1\",\r\n  \"createdBy\": \"admin\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"create"
+					]
+				},
+				"description": "create permissions\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/create/bulk",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"permissionUuid\": \"perm-0002\",\r\n    \"permissionName\": \"USER_WRITE\",\r\n    \"createdBy\": \"admin\"\r\n  },\r\n  {\r\n    \"permissionUuid\": \"perm-0003\",\r\n    \"permissionName\": \"USER_DELETE\",\r\n    \"createdBy\": \"admin\"\r\n  }]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/create/bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"create",
+						"bulk"
+					]
+				},
+				"description": "create/bulk"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/update/46",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"permissionName\": \"USER_VIEW\",\r\n  \"updatedBy\": \"manager\",\r\n  \"isActive\": true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/update/46",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"update",
+						"46"
+					]
+				},
+				"description": "bulk_update"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/update/46",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"permissionName\": \"USER_VIEW\",\r\n  \"updatedBy\": \"manager\",\r\n  \"isActive\": true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/update/46",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"update",
+						"46"
+					]
+				},
+				"description": "Update permission"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/update/46",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"permissionName\": \"USER_VIEW\",\r\n  \"updatedBy\": \"manager\",\r\n  \"isActive\": true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/getAlllist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"getAlllist"
+					]
+				},
+				"description": "get all permissions"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/assign/bulk/20",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[42,45,46,41,40]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/assign/bulk/20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"assign",
+						"bulk",
+						"20"
+					]
+				},
+				"description": "bulk assign"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/remove/bulk/20",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[45,46]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/remove/bulk/20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"remove",
+						"bulk",
+						"20"
+					]
+				},
+				"description": "bulk delte"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/permissions/45",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/api/permissions/45",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"permissions",
+						"45"
+					]
+				},
+				"description": "getId"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/roles/createrole?roleName=AdminnewBha&permissions=CREATE_USER,UPDATE_USER",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/api/roles/createrole?roleName=AdminnewBha&permissions=CREATE_USER,UPDATE_USER",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"roles",
+						"createrole"
+					],
+					"query": [
+						{
+							"key": "roleName",
+							"value": "AdminnewBha"
+						},
+						{
+							"key": "permissions",
+							"value": "CREATE_USER,UPDATE_USER"
+						}
+					]
+				},
+				"description": "Role"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/roles/getroles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/api/roles/getroles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"roles",
+						"getroles"
+					]
+				},
+				"description": "getRoles"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/user-roles/assign?userId=14&roleId=20",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/api/user-roles/assign?userId=14&roleId=20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"user-roles",
+						"assign"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "14"
+						},
+						{
+							"key": "roleId",
+							"value": "20"
+						}
+					]
+				},
+				"description": "UserRole"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9091/api/user-roles/assign?userId=14&roleId=20",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/api/user-roles/user/14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"api",
+						"user-roles",
+						"user",
+						"14"
+					]
+				},
+				"description": "get role id"
+			},
+			"response": []
+		}
+	]
+}
